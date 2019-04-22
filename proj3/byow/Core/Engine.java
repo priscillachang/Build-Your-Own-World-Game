@@ -2,12 +2,48 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+
+    private TETile[][] generateWorld(long seed) {
+        Random rand = new Random(seed);
+
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] world = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                world[x][y] = Tileset.NOTHING;
+            }
+        }
+        int numRooms = RandomUtils.uniform(rand, 5, 20);
+        List<Room> rooms = new ArrayList<>();
+        while (rooms.size() < numRooms) {
+            Room newRoom = generateRandomRoom(rand);
+            if (!newRoom.intersectsAny(rooms)) {
+                rooms.add(newRoom);
+                newRoom.drawRoom(world);
+            }
+        }
+
+        return world;
+    }
+
+    private Room generateRandomRoom(Random rand) {
+        int width = RandomUtils.uniform(rand, 3, 10);
+        int height = RandomUtils.uniform(rand, 3, 10);
+        int x = RandomUtils.uniform(rand, 1, WIDTH - width - 1);
+        int y = RandomUtils.uniform(rand, 1, HEIGHT - height - 1);
+        return new Room(x, y, width, height);
+    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -45,8 +81,12 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        input = input.toLowerCase();
+        int begin = input.indexOf("n") + 1;
+        int end = input.indexOf("s");
+        long seed = Long.parseLong(input.substring(begin, end));
 
-        TETile[][] finalWorldFrame = null;
+        TETile[][] finalWorldFrame = generateWorld(seed);
         return finalWorldFrame;
     }
 }
