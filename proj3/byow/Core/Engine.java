@@ -7,6 +7,7 @@ import byow.TileEngine.Tileset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -33,7 +34,16 @@ public class Engine {
                 newRoom.drawRoom(world);
             }
         }
-
+        WeightedQuickUnionUF weighted = new WeightedQuickUnionUF(rooms.size());
+        while (weighted.count() > 1) {
+            int roomOne = RandomUtils.uniform(rand, rooms.size());
+            int roomTwo = RandomUtils.uniform(rand, rooms.size());
+            if (roomOne != roomTwo) {
+                weighted.union(roomOne, roomTwo);
+                Room r = rooms.get(roomOne);
+                r.connect(world, rooms.get(roomTwo), rand);
+            }
+        }
         return world;
     }
 
