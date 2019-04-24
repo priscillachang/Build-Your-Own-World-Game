@@ -45,15 +45,9 @@ public class Room {
      * @param other The other room to connect to
      */
     public void connect(TETile[][] world, Room other, Random rand) {
-        if (intersectsInterval(other.x, x, x + width)
-                || intersectsInterval(other.x + other.width - 1, x, x + width)
-                || intersectsInterval(x, other.x, other.x + other.width)
-                || intersectsInterval(x + width - 1, other.x, other.x + other.width)) {
+        if (intervalsIntersect(x, x + width, other.x, other.x + other.width)) {
             connectVerticallyAligned(world, other, rand);
-        } else if (intersectsInterval(other.y, y, y + height)
-                || intersectsInterval(other.y + other.height - 1, y, y + height)
-                || intersectsInterval(y, other.y, other.y + other.height)
-                || intersectsInterval(y, other.y, other.y + other.height)) {
+        } else if (intervalsIntersect(y, y + height, other.y, other.y + other.height)) {
             connectHorizontallyAligned(world, other, rand);
         } else {
             connectWithTurn(world, other, rand);
@@ -66,15 +60,10 @@ public class Room {
      * @return true if the rooms intersect, false otherwise
      */
     public boolean intersects(Room other) {
-        int startX = x - 1;
-        int endX = x + width + 1;
-        int startY = y - 1;
-        int endY = y + height + 1;
-
-        boolean xIntersects = intersectsInterval(other.x, startX, endX)
-                || intersectsInterval(other.x + other.width, startX, endX);
-        boolean yIntersects = intersectsInterval(other.y, startY, endY)
-                || intersectsInterval(other.y + other.height, startY, endY);
+        boolean xIntersects = intervalsIntersect(x - 1, x + width + 1,
+                other.x - 1, other.x + other.width);
+        boolean yIntersects = intervalsIntersect(y - 1, y + height + 1,
+                other.y - 1, other.y + other.height);
         return xIntersects && yIntersects;
     }
 
@@ -95,6 +84,13 @@ public class Room {
     // Returns true if the given coordinate lies within the given interval.
     private static boolean intersectsInterval(int coordinate, int start, int end) {
         return coordinate >= start && coordinate < end;
+    }
+
+    private static boolean intervalsIntersect(int start1, int end1, int start2, int end2) {
+        return intersectsInterval(start1, start2, end2)
+                || intersectsInterval(end1 - 1, start2, end2)
+                || intersectsInterval(start2, start1, end1)
+                || intersectsInterval(end2 - 1, start1, end1);
     }
 
     private void connectVerticallyAligned(TETile[][] world, Room other, Random rand) {
@@ -135,7 +131,7 @@ public class Room {
         if (RandomUtils.bernoulli(rand)) {
             // vertical, then horizontal
             int hallwayX = RandomUtils.uniform(rand, x, x + width);
-            int hallwayY = RandomUtils.uniform(rand, other.y, other.y + other.width);
+            int hallwayY = RandomUtils.uniform(rand, other.y, other.y + other.height);
             Room turnRoom = new Room(hallwayX, hallwayY, 1, 1);
             turnRoom.drawRoom(world);
             connectVerticallyAligned(world, turnRoom, rand);

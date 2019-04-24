@@ -38,7 +38,7 @@ public class Engine {
         while (weighted.count() > 1) {
             int roomOne = RandomUtils.uniform(rand, rooms.size());
             int roomTwo = RandomUtils.uniform(rand, rooms.size());
-            if (roomOne != roomTwo) {
+            if (roomOne != roomTwo && !weighted.connected(roomOne, roomTwo)) {
                 weighted.union(roomOne, roomTwo);
                 Room r = rooms.get(roomOne);
                 r.connect(world, rooms.get(roomTwo), rand);
