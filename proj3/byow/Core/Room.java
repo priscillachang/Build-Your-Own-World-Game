@@ -30,12 +30,20 @@ public class Room {
             }
         }
         for (int i = x - 1; i < x + width + 1; i++) {
-            world[i][y - 1] = Tileset.WALL;
-            world[i][y + height] = Tileset.WALL;
+            if (world[i][y - 1] == Tileset.NOTHING) {
+                world[i][y - 1] = Tileset.WALL;
+            }
+            if (world[i][y + height] == Tileset.NOTHING) {
+                world[i][y + height] = Tileset.WALL;
+            }
         }
         for (int j = y; j < y + height; j++) {
-            world[x - 1][j] = Tileset.WALL;
-            world[x + width][j] = Tileset.WALL;
+            if (world[x - 1][j] == Tileset.NOTHING) {
+                world[x - 1][j] = Tileset.WALL;
+            }
+            if (world[x + width][j] == Tileset.NOTHING) {
+                world[x + width][j] = Tileset.WALL;
+            }
         }
     }
 
