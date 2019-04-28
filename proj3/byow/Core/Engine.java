@@ -14,11 +14,21 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private State currentState;
+    private long seed;
+    private Random rand;
+    private TETile[][] world;
+    private CharacterTile player;
 
-    private TETile[][] generateWorld(long seed) {
-        Random rand = new Random(seed);
+    private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
 
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
+    public Engine() {
+        seed = 0L;
+        currentState = State.MAIN_MENU;
+    }
+
+    private void generateWorld() {
+        world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 world[x][y] = Tileset.NOTHING;
@@ -43,7 +53,8 @@ public class Engine {
                 r.connect(world, rooms.get(roomTwo), rand);
             }
         }
-        return world;
+        Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
+        player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
     }
 
     private Room generateRandomRoom(Random rand) {
@@ -90,5 +101,35 @@ public class Engine {
 
         TETile[][] finalWorldFrame = generateWorld(seed);
         return finalWorldFrame;
+    }
+
+
+    private void inputCharacter(char c) {
+        c = Character.toLowerCase(c);
+        if (currentState == State.MAIN_MENU) {
+            if (c == 'n') {
+                currentState = State.SEED_INPUT;
+            }
+        } else if (currentState == State.SEED_INPUT) {
+            if (Character.isDigit(c)) {
+                int digit = Character.getNumericValue(c);
+                seed = seed * 10 + digit;
+            } else if (c == 's') {
+                rand = new Random(seed);
+                generateWorld();
+                currentState = State.IN_GAME;
+            }
+        } else {
+            if (c == 'w') {
+                player.moveUp(world);
+            } else if (c == 'a') {
+                player.moveLeft(world);
+            } else if (c == 's') {
+                player.moveDown(world);
+            } else if (c == 'd') {
+                player.moveRight(world);
+            }
+            ter.renderFrame(world);
+        }
     }
 }

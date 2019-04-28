@@ -98,7 +98,7 @@ public class TETile {
         StdDraw.text(x + 0.5, y + 0.5, Character.toString(character()));
     }
 
-    /** Character representation of the tile. Used for drawing in text mode.
+    /** CharacterTile representation of the tile. Used for drawing in text mode.
      * @return character representation
      */
     public char character() {

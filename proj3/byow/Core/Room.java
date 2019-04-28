@@ -89,6 +89,15 @@ public class Room {
         return false;
     }
 
+    /**
+     * Spawns a given character in a random location within this room.
+     */
+    public CharacterTile randomSpawn(Random rand, TETile type) {
+        int characterX = RandomUtils.uniform(rand, x, x + width);
+        int characterY = RandomUtils.uniform(rand, y, y + height);
+        return new CharacterTile(characterX, characterY, type);
+    }
+
     // Returns true if the given coordinate lies within the given interval.
     private static boolean intersectsInterval(int coordinate, int start, int end) {
         return coordinate >= start && coordinate < end;
