@@ -4,8 +4,8 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import byow.proj2ab.ArrayHeapMinPQ;
 import byow.proj2ab.ExtrinsicMinPQ;
-
-import java.util.*;
+import java.util.List;
+import java.util.Collections;
 import java.awt.Point;
 
 public class CharacterTile {
@@ -74,8 +74,8 @@ public class CharacterTile {
             int distance = distTo.get(current);
             for (Direction d : Direction.values()) {
                 Point to = getPoint(current, d);
-                if (isMovable(world[(int) to.getX()][(int) to.getY()]) &&
-                        (!distTo.containsKey(to) || distTo.get(to) > distance + 1)) {
+                if (isMovable(world[(int) to.getX()][(int) to.getY()])
+                        && (!distTo.containsKey(to) || distTo.get(to) > distance + 1)) {
                     distTo.put(to, distance + 1);
                     edgeTo.put(to, current);
                     int heuristic = manhattanDistance(to, target);
