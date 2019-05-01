@@ -4,12 +4,15 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.awt.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
@@ -26,12 +29,14 @@ public class Engine {
     private CharacterTile player;
     private CharacterTile[] enemies;
     private String headsUpText;
+    private String enteredChars;
 
     private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
 
     public Engine() {
         seed = 0L;
         currentState = State.MAIN_MENU;
+        enteredChars = "";
         mainMenu();
     }
 
@@ -95,7 +100,7 @@ public class Engine {
                 char c = StdDraw.nextKeyTyped();
                 inputCharacter(c);
             }
-            /*double x = StdDraw.mouseX();
+            double x = StdDraw.mouseX();
             double y = StdDraw.mouseY();
             if (currentState == State.MAIN_MENU && StdDraw.isMousePressed()) {
                 if (x > 0.3 && x < 0.8) {
@@ -106,7 +111,7 @@ public class Engine {
                         inputCharacter('n');
                     }
                 }
-            }*/
+            }
             if (world != null) {
                 int xTile = Math.round((int) StdDraw.mouseX());
                 int yTile = Math.round((int) StdDraw.mouseY());
@@ -148,6 +153,7 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.40, "Press [S] when done");
     }
+
     //@Source looked online to see examples on how to render a local date and time
     //link : https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
     private void render() {
@@ -156,10 +162,34 @@ public class Engine {
         if (headsUpText != null) {
             StdDraw.textLeft(0.1, HEIGHT - 0.5, headsUpText);
         }
-        /*DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm");
         LocalDateTime instance = LocalDateTime.now();
-        StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));*/
+        StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));
         StdDraw.show();
+    }
+
+    private void save() {
+        try {
+            PrintWriter writer = new PrintWriter("saveFile.txt");
+            writer.println(enteredChars);
+            writer.close();
+        } catch (IOException e) {}
+    }
+
+    private void load() {
+        try {
+            Scanner scan = new Scanner(new FileReader("saveFile.txt"));
+            if (scan.hasNextLine()) {
+                String sequence = scan.nextLine();
+                for (int i = 0; i < sequence.length(); i++) {
+                    char c = sequence.charAt(i);
+                    if (":ql".indexOf(c) == -1) {
+                        inputCharacter(c);
+                    }
+                }
+            }
+            scan.close();
+        } catch (IOException e) {}
     }
 
     private void moveEnemies() {
@@ -223,12 +253,18 @@ public class Engine {
 
 
     private void inputCharacter(char c) {
-        System.out.print(c);
         c = Character.toLowerCase(c);
+        if (c == 'q' && enteredChars.endsWith(":")) {
+            save();
+            System.exit(0);
+        }
+        enteredChars += c;
         if (currentState == State.MAIN_MENU) {
             if (c == 'n') {
                 currentState = State.SEED_INPUT;
                 seedMenu();
+            } else if (c == 'l') {
+                load();
             }
         } else if (currentState == State.SEED_INPUT) {
             if (Character.isDigit(c)) {
