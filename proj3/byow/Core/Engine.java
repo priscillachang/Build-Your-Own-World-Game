@@ -7,6 +7,8 @@ import byow.TileEngine.Tileset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Engine {
@@ -70,6 +72,12 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                inputCharacter(c);
+            }
+        }
     }
 
     /**
@@ -94,17 +102,15 @@ public class Engine {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] interactWithInputString(String input) {
-        input = input.toLowerCase();
-        int begin = input.indexOf("n") + 1;
-        int end = input.indexOf("s");
-        long seed = Long.parseLong(input.substring(begin, end));
-
-        TETile[][] finalWorldFrame = generateWorld(seed);
-        return finalWorldFrame;
+        for (int i = 0; i < input.length(); i++) {
+            inputCharacter(input.charAt(i));
+        }
+        return world;
     }
 
 
     private void inputCharacter(char c) {
+        System.out.print(c);
         c = Character.toLowerCase(c);
         if (currentState == State.MAIN_MENU) {
             if (c == 'n') {
@@ -118,6 +124,7 @@ public class Engine {
                 rand = new Random(seed);
                 generateWorld();
                 currentState = State.IN_GAME;
+                ter.renderFrame(world);
             }
         } else {
             if (c == 'w') {

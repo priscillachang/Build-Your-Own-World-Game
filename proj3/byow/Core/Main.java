@@ -15,10 +15,10 @@ public class Main {
             Engine engine = new Engine();
             engine.ter.initialize(Engine.WIDTH, Engine.HEIGHT);
             TETile[][] world = engine.interactWithInputString(args[0]);
-            System.out.println(engine.toString());
-            engine.ter.renderFrame(world);
+//            engine.ter.renderFrame(world);
         } else {
             Engine engine = new Engine();
+            engine.ter.initialize(Engine.WIDTH, Engine.HEIGHT);
             engine.interactWithKeyboard();
         }
     }
