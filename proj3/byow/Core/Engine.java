@@ -110,6 +110,9 @@ public class Engine {
                     if (y > 0.55 && y < 0.65) {
                         inputCharacter('n');
                     }
+                    if (y > 0.35 && y < 0.45) {
+                        inputCharacter('q');
+                    }
                 }
             }
             if (world != null) {
@@ -138,7 +141,7 @@ public class Engine {
        StdDraw.setFont(font1);
        StdDraw.text(0.5, 0.6, "New Game [N]");
         StdDraw.text(0.5, 0.5, "Load Game [L]");
-        StdDraw.text(0.5, 0.4, "Quit [:Q]");
+        StdDraw.text(0.5, 0.4, "Quit [Q]");
     }
     public void seedMenu() {
         StdDraw.clear();
@@ -156,9 +159,14 @@ public class Engine {
 
     public void gameOver() {
         StdDraw.clear();
-        Font font = new Font("Arial", Font.BOLD, 60);
+        StdDraw.setCanvasSize(512, 512);
+        StdDraw.setXscale(0.0, 1.0);
+        StdDraw.setYscale(0.0, 1.0);
+        StdDraw.setPenColor(255, 255, 255);
+        Font font = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.5, "YOU LOSE");
+        StdDraw.show();
     }
     public void winner() {
         StdDraw.clear();
@@ -323,12 +331,8 @@ public class Engine {
             if (isContactingEnemy()) {
                 currentState = State.GAME_OVER;
                 gameOver();
+                return;
             }
-            render();
-        } else if (currentState == State.GAME_OVER) {
-            gameOver();
-        } else if (currentState == State.YOU_WIN) {
-            winner();
         }
     }
 }
