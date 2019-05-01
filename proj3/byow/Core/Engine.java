@@ -115,7 +115,7 @@ public class Engine {
                     }
                 }
             }
-            if (world != null) {
+            if (currentState == State.IN_GAME) {
                 int xTile = Math.round((int) StdDraw.mouseX());
                 int yTile = Math.round((int) StdDraw.mouseY());
                 if (xTile >= 0 && xTile < Engine.WIDTH && yTile >= 0 && yTile < Engine.HEIGHT) {
@@ -158,7 +158,7 @@ public class Engine {
     }
 
     public void gameOver() {
-        StdDraw.clear();
+        StdDraw.clear(Color.BLACK);
         StdDraw.setCanvasSize(512, 512);
         StdDraw.setXscale(0.0, 1.0);
         StdDraw.setYscale(0.0, 1.0);
@@ -311,7 +311,7 @@ public class Engine {
                 ter.initialize(Engine.WIDTH, Engine.HEIGHT);
                 render();
             }
-        } else if (currentState == State.IN_GAME){
+        } else if (currentState == State.IN_GAME) {
             hideEnemyPaths();
             int prevX = player.getX();
             int prevY = player.getY();
