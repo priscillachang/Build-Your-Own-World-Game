@@ -31,7 +31,7 @@ public class Engine {
     private String headsUpText;
     private String enteredChars;
 
-    private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
+    private enum State { MAIN_MENU, SEED_INPUT, IN_GAME, GAME_OVER, YOU_WIN; }
 
     public Engine() {
         seed = 0L;
@@ -152,6 +152,19 @@ public class Engine {
         }
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.40, "Press [S] when done");
+    }
+
+    public void gameOver() {
+        StdDraw.clear();
+        Font font = new Font("Arial", Font.BOLD, 60);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.5, "YOU LOSE");
+    }
+    public void winner() {
+        StdDraw.clear();
+        Font font = new Font("Arial", Font.BOLD, 60);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.5, "YOU WIN");
     }
 
     //@Source looked online to see examples on how to render a local date and time
@@ -278,7 +291,7 @@ public class Engine {
                 ter.initialize(Engine.WIDTH, Engine.HEIGHT);
                 render();
             }
-        } else {
+        } else if (currentState == State.IN_GAME){
             hideEnemyPaths();
             if (c == 'w') {
                 moveEnemies();
@@ -296,6 +309,10 @@ public class Engine {
                 showEnemyPaths();
             }
             render();
+        } else if (currentState == State.GAME_OVER) {
+            gameOver();
+        } else if (currentState == State.YOU_WIN) {
+            winner();
         }
     }
 }
