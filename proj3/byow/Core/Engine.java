@@ -332,8 +332,10 @@ public class Engine {
                 rand = new Random(seed);
                 generateWorld();
                 currentState = State.IN_GAME;
-                ter.initialize(Engine.WIDTH, Engine.HEIGHT);
-                render();
+                if (shouldDraw) {
+                    ter.initialize(Engine.WIDTH, Engine.HEIGHT);
+                    render();
+                }
             }
         } else if (currentState == State.IN_GAME) {
             hideEnemyPaths();
