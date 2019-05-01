@@ -59,6 +59,7 @@ public class Engine {
         }
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
+        world[player.getX()][player.getY()] = Tileset.AVATAR;
     }
 
     private Room generateRandomRoom(Random rand) {
@@ -78,6 +79,27 @@ public class Engine {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
                 inputCharacter(c);
+            }
+            if (world != null) {
+                int xTile = Math.round((int) StdDraw.mouseX());
+                int yTile = Math.round((int) StdDraw.mouseY());
+                if (xTile >= 0 && xTile < Engine.WIDTH && yTile >= 0 && yTile < Engine.HEIGHT) {
+                    StdDraw.setPenColor(255, 255, 255);
+                    TETile tile = world[xTile][yTile];
+                    if (tile == Tileset.AVATAR) {
+                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Avatar");
+                        StdDraw.show();
+                    } else if (tile == Tileset.WALL) {
+                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Wall");
+                        StdDraw.show();
+                    } else if (tile == Tileset.FLOOR) {
+                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Floor");
+                        StdDraw.show();
+                    } else if (tile == Tileset.NOTHING) {
+                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Empty");
+                        StdDraw.show();
+                    }
+                }
             }
         }
     }
