@@ -2,11 +2,18 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import byow.proj2ab.ArrayHeapMinPQ;
+import byow.proj2ab.ExtrinsicMinPQ;
+
+import java.util.*;
+import java.awt.Point;
 
 public class CharacterTile {
     private int x;
     private int y;
     private TETile avatar;
+
+    private enum Direction { NORTH, SOUTH, EAST, WEST; }
 
     public CharacterTile(int x, int y, TETile avatar) {
         this.x = x;
@@ -51,6 +58,65 @@ public class CharacterTile {
             return true;
         }
         return false;
+    }
+
+    public List<Point> findPathTowards(TETile[][] world, int targetX, int targetY) {
+        Map<Point, Integer> distTo = new HashMap<>();
+        Map<Point, Point> edgeTo = new HashMap<>();
+        ExtrinsicMinPQ<Point> fringe = new ArrayHeapMinPQ<>();
+        Point source = new Point(x, y);
+        Point target = new Point(targetX, targetY);
+        fringe.add(source, 0.0);
+        distTo.put(source, 0);
+
+        while (fringe.size() > 0 && !fringe.getSmallest().equals(target)) {
+            Point current = fringe.removeSmallest();
+            int distance = distTo.get(current);
+            for (Direction d : Direction.values()) {
+                Point to = getPoint(current, d);
+                if (isMovable(world[(int) to.getX()][(int) to.getY()]) &&
+                        (!distTo.containsKey(to) || distTo.get(to) > distance + 1)) {
+                    distTo.put(to, distance + 1);
+                    edgeTo.put(to, current);
+                    int heuristic = manhattanDistance(to, target);
+                    int priority = distance + 1 + heuristic;
+                    if (fringe.contains(to)) {
+                        fringe.changePriority(to, priority);
+                    } else {
+                        fringe.add(to, priority);
+                    }
+                }
+            }
+        }
+        List<Point> path = new ArrayList<>();
+        Point current = target;
+        while (!current.equals(source)) {
+            path.add(current);
+            current = edgeTo.get(current);
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    public boolean moveTowards(TETile[][] world, CharacterTile other) {
+        Point next = findPathTowards(world, other.x, other.y).get(0);
+        return moveTo(world, (int) next.getX(), (int) next.getY());
+    }
+
+    private Point getPoint(Point current, Direction direction) {
+        if (direction == Direction.NORTH) {
+            return new Point((int) current.getX(), (int) current.getY() + 1);
+        } else if (direction == Direction.SOUTH) {
+            return new Point((int) current.getX(), (int) current.getY() - 1);
+        } else if (direction == Direction.EAST) {
+            return new Point((int) current.getX() + 1, (int) current.getY());
+        } else {
+            return new Point((int) current.getX() - 1, (int) current.getY());
+        }
+    }
+
+    private static int manhattanDistance(Point a, Point b) {
+        return (int) Math.abs(a.getX() - b.getX()) + (int) Math.abs(a.getY() - b.getY());
     }
 
     private boolean isMovable(TETile tile) {
