@@ -236,6 +236,16 @@ public class Engine {
         }
     }
 
+    private boolean isContactingEnemy() {
+        for (int i = 0; i < enemies.length; i++) {
+            if (player.getX() == enemies[i].getX() &&
+                player.getY() == enemies[i].getY()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Method used for autograding and testing your code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
@@ -278,6 +288,8 @@ public class Engine {
                 seedMenu();
             } else if (c == 'l') {
                 load();
+            } else if (c == 'q') {
+                System.exit(0);
             }
         } else if (currentState == State.SEED_INPUT) {
             if (Character.isDigit(c)) {
@@ -307,6 +319,10 @@ public class Engine {
                 player.moveRight(world);
             } else if (c == 'e') {
                 showEnemyPaths();
+            }
+            if (isContactingEnemy()) {
+                currentState = State.GAME_OVER;
+                gameOver();
             }
             render();
         } else if (currentState == State.GAME_OVER) {
