@@ -88,6 +88,9 @@ public class CharacterTile {
                 }
             }
         }
+        if (fringe.size() == 0) {
+            return null;
+        }
         List<Point> path = new ArrayList<>();
         Point current = target;
         while (!current.equals(source)) {
@@ -99,7 +102,11 @@ public class CharacterTile {
     }
 
     public boolean moveTowards(TETile[][] world, CharacterTile other) {
-        Point next = findPathTowards(world, other.x, other.y).get(0);
+        List<Point> path = findPathTowards(world, other.x, other.y);
+        if (path == null || path.size() == 0) {
+            return false;
+        }
+        Point next = path.get(0);
         return moveTo(world, (int) next.getX(), (int) next.getY());
     }
 
@@ -116,10 +123,10 @@ public class CharacterTile {
     }
 
     private static int manhattanDistance(Point a, Point b) {
-        return (int) Math.abs(a.getX() - b.getX()) + (int) Math.abs(a.getY() - b.getY());
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 
     private boolean isMovable(TETile tile) {
-        return tile == Tileset.FLOOR;
+        return tile != Tileset.WALL && tile != avatar;
     }
 }

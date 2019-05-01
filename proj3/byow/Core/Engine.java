@@ -4,10 +4,10 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.awt.Font;
 
 import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
@@ -22,6 +22,7 @@ public class Engine {
     private Random rand;
     private TETile[][] world;
     private CharacterTile player;
+    private CharacterTile[] enemies;
     private String headsUpText;
 
     private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
@@ -61,6 +62,17 @@ public class Engine {
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
         world[player.getX()][player.getY()] = Tileset.AVATAR;
+
+        enemies = new CharacterTile[3];
+        for (int i = 0; i < 3; i++) {
+            Room enemyRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
+            if (enemyRoom == playerRoom) {
+                i--;
+                continue;
+            }
+            enemies[i] = enemyRoom.randomSpawn(rand, Tileset.ENEMY);
+            world[enemies[i].getX()][enemies[i].getY()] = Tileset.ENEMY;
+        }
     }
 
     private Room generateRandomRoom(Random rand) {
@@ -132,6 +144,37 @@ public class Engine {
         StdDraw.show();
     }
 
+    private void moveEnemies() {
+        for (int i = 0; i < enemies.length; i++) {
+            enemies[i].moveTowards(world, player);
+        }
+    }
+
+    private void showEnemyPaths() {
+        for (int i = 0; i < enemies.length; i++) {
+            List<Point> path = enemies[i].findPathTowards(world, player.getX(), player.getY());
+            if (path == null) {
+                continue;
+            }
+            for (int j = 0; j < path.size() - 1; j++) {
+                Point p = path.get(j);
+                if (world[p.x][p.y] == Tileset.FLOOR) {
+                    world[p.x][p.y] = Tileset.ENEMY_PATH;
+                }
+            }
+        }
+    }
+
+    private void hideEnemyPaths() {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                if (world[x][y] == Tileset.ENEMY_PATH) {
+                    world[x][y] = Tileset.FLOOR;
+                }
+            }
+        }
+    }
+
     /**
      * Method used for autograding and testing your code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
@@ -182,14 +225,21 @@ public class Engine {
                 render();
             }
         } else {
+            hideEnemyPaths();
             if (c == 'w') {
+                moveEnemies();
                 player.moveUp(world);
             } else if (c == 'a') {
+                moveEnemies();
                 player.moveLeft(world);
             } else if (c == 's') {
+                moveEnemies();
                 player.moveDown(world);
             } else if (c == 'd') {
+                moveEnemies();
                 player.moveRight(world);
+            } else if (c == 'e') {
+                showEnemyPaths();
             }
             render();
         }

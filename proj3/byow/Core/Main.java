@@ -2,6 +2,8 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 
+import java.awt.*;
+
 /** This is the main entry point for the program. This class simply parses
  *  the command line inputs, and lets the byow.Core.Engine class take over
  *  in either keyboard or input string mode.
@@ -15,7 +17,6 @@ public class Main {
             Engine engine = new Engine();
             engine.ter.initialize(Engine.WIDTH, Engine.HEIGHT);
             TETile[][] world = engine.interactWithInputString(args[0]);
-//            engine.ter.renderFrame(world);
         } else {
             Engine engine = new Engine();
             engine.interactWithKeyboard();
