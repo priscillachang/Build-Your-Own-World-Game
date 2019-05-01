@@ -7,8 +7,9 @@ import byow.TileEngine.Tileset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.awt.Font;
 
-import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Engine {
@@ -27,6 +28,7 @@ public class Engine {
     public Engine() {
         seed = 0L;
         currentState = State.MAIN_MENU;
+        mainMenu();
     }
 
     private void generateWorld() {
@@ -79,6 +81,30 @@ public class Engine {
             }
         }
     }
+    public void mainMenu() {
+       StdDraw.setCanvasSize(512, 512);
+       Font font = new Font("Arial", Font.BOLD, 40);
+       StdDraw.setFont(font);
+       StdDraw.text(0.5, 0.85, "CS61B: The Game");
+       Font font1 = new Font("Arial", Font.PLAIN, 24);
+       StdDraw.setFont(font1);
+       StdDraw.text(0.5, 0.55, "New Game [N]");
+        StdDraw.text(0.5, 0.5, "Load Game [L]");
+        StdDraw.text(0.5, 0.45, "Quit [:Q]");
+    }
+    public void seedMenu() {
+        StdDraw.clear();
+        Font font = new Font("Arial", Font.BOLD, 40);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.60, "Enter Seed Number");
+        Font font1 = new Font("Arial", Font.ITALIC, 36);
+        StdDraw.setFont(font1);
+        if (seed != 0) {
+            StdDraw.text(0.5, 0.5, Long.toString(seed));
+        }
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.40, "Press [S] when done");
+    }
 
     /**
      * Method used for autograding and testing your code. The input string will be a series
@@ -115,15 +141,18 @@ public class Engine {
         if (currentState == State.MAIN_MENU) {
             if (c == 'n') {
                 currentState = State.SEED_INPUT;
+                seedMenu();
             }
         } else if (currentState == State.SEED_INPUT) {
             if (Character.isDigit(c)) {
                 int digit = Character.getNumericValue(c);
                 seed = seed * 10 + digit;
+                seedMenu();
             } else if (c == 's') {
                 rand = new Random(seed);
                 generateWorld();
                 currentState = State.IN_GAME;
+                ter.initialize(Engine.WIDTH, Engine.HEIGHT);
                 ter.renderFrame(world);
             }
         } else {

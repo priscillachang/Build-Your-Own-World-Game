@@ -18,7 +18,6 @@ public class Main {
 //            engine.ter.renderFrame(world);
         } else {
             Engine engine = new Engine();
-            engine.ter.initialize(Engine.WIDTH, Engine.HEIGHT);
             engine.interactWithKeyboard();
         }
     }
