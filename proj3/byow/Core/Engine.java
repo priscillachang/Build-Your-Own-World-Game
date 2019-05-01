@@ -162,17 +162,21 @@ public class Engine {
         StdDraw.setCanvasSize(512, 512);
         StdDraw.setXscale(0.0, 1.0);
         StdDraw.setYscale(0.0, 1.0);
-        StdDraw.setPenColor(255, 255, 255);
+        //StdDraw.setPenColor(255, 255, 255);
         Font font = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.5, "YOU LOSE");
         StdDraw.show();
     }
     public void winner() {
-        StdDraw.clear();
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setCanvasSize(512, 512);
+        StdDraw.setXscale(0.0, 1.0);
+        StdDraw.setYscale(0.0, 1.0);
         Font font = new Font("Arial", Font.BOLD, 60);
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.5, "YOU WIN");
+        StdDraw.show();
     }
 
     //@Source looked online to see examples on how to render a local date and time
