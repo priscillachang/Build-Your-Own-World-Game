@@ -6,6 +6,9 @@ import byow.proj2ab.ArrayHeapMinPQ;
 import byow.proj2ab.ExtrinsicMinPQ;
 import java.util.List;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.awt.Point;
 
 public class CharacterTile {
