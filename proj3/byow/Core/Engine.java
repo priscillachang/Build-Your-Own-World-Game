@@ -217,7 +217,9 @@ public class Engine {
             PrintWriter writer = new PrintWriter("saveFile.txt");
             writer.println(enteredChars);
             writer.close();
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void load() {
@@ -233,7 +235,9 @@ public class Engine {
                 }
             }
             scan.close();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void moveEnemies(int prevX, int prevY) {
@@ -311,7 +315,9 @@ public class Engine {
         c = Character.toLowerCase(c);
         if (c == 'q' && enteredChars.endsWith(":")) {
             save();
-            System.exit(0);
+            if (shouldDraw) {
+                System.exit(0);
+            }
         }
         enteredChars += c;
         if (currentState == State.MAIN_MENU) {
@@ -320,7 +326,7 @@ public class Engine {
                 seedMenu();
             } else if (c == 'l') {
                 load();
-            } else if (c == 'q') {
+            } else if (c == 'q' && shouldDraw) {
                 System.exit(0);
             }
         } else if (currentState == State.SEED_INPUT) {
