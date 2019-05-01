@@ -22,6 +22,7 @@ public class Engine {
     private Random rand;
     private TETile[][] world;
     private CharacterTile player;
+    private String headsUpText;
 
     private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
 
@@ -84,22 +85,16 @@ public class Engine {
                 int xTile = Math.round((int) StdDraw.mouseX());
                 int yTile = Math.round((int) StdDraw.mouseY());
                 if (xTile >= 0 && xTile < Engine.WIDTH && yTile >= 0 && yTile < Engine.HEIGHT) {
-                    StdDraw.setPenColor(255, 255, 255);
                     TETile tile = world[xTile][yTile];
-                    if (tile == Tileset.AVATAR) {
-                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Avatar");
-                        StdDraw.show();
-                    } else if (tile == Tileset.WALL) {
-                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Wall");
-                        StdDraw.show();
-                    } else if (tile == Tileset.FLOOR) {
-                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Floor");
-                        StdDraw.show();
-                    } else if (tile == Tileset.NOTHING) {
-                        StdDraw.textLeft(0.05, Engine.HEIGHT - 1, "Empty");
-                        StdDraw.show();
+                    if (tile != null) {
+                        headsUpText = tile.description();
+                    } else {
+                        headsUpText = null;
                     }
+                } else {
+                    headsUpText = null;
                 }
+                render();
             }
         }
     }
@@ -126,6 +121,15 @@ public class Engine {
         }
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.40, "Press [S] when done");
+    }
+
+    private void render() {
+        ter.renderFrame(world);
+        if (headsUpText != null) {
+            StdDraw.setPenColor(255, 255, 255);
+            StdDraw.textLeft(0.1, HEIGHT - 1, headsUpText);
+        }
+        StdDraw.show();
     }
 
     /**
@@ -175,7 +179,7 @@ public class Engine {
                 generateWorld();
                 currentState = State.IN_GAME;
                 ter.initialize(Engine.WIDTH, Engine.HEIGHT);
-                ter.renderFrame(world);
+                render();
             }
         } else {
             if (c == 'w') {
@@ -187,7 +191,7 @@ public class Engine {
             } else if (c == 'd') {
                 player.moveRight(world);
             }
-            ter.renderFrame(world);
+            render();
         }
     }
 }
