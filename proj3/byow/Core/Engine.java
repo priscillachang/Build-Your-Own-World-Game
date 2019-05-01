@@ -4,10 +4,13 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.awt.Font;
+import java.time.LocalDateTime;
 
 import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
@@ -81,6 +84,18 @@ public class Engine {
                 char c = StdDraw.nextKeyTyped();
                 inputCharacter(c);
             }
+            /*double x = StdDraw.mouseX();
+            double y = StdDraw.mouseY();
+            if (currentState == State.MAIN_MENU && StdDraw.isMousePressed()) {
+                if (x > 0.3 && x < 0.8) {
+                    if (y > 0.45 && y < 0.55) {
+                        inputCharacter('l');
+                    }
+                    if (y > 0.55 && y < 0.65) {
+                        inputCharacter('n');
+                    }
+                }
+            }*/
             if (world != null) {
                 int xTile = Math.round((int) StdDraw.mouseX());
                 int yTile = Math.round((int) StdDraw.mouseY());
@@ -105,9 +120,9 @@ public class Engine {
        StdDraw.text(0.5, 0.85, "CS61B: The Game");
        Font font1 = new Font("Arial", Font.PLAIN, 24);
        StdDraw.setFont(font1);
-       StdDraw.text(0.5, 0.55, "New Game [N]");
+       StdDraw.text(0.5, 0.6, "New Game [N]");
         StdDraw.text(0.5, 0.5, "Load Game [L]");
-        StdDraw.text(0.5, 0.45, "Quit [:Q]");
+        StdDraw.text(0.5, 0.4, "Quit [:Q]");
     }
     public void seedMenu() {
         StdDraw.clear();
@@ -122,13 +137,17 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.40, "Press [S] when done");
     }
-
+    //@Source looked online to see examples on how to render a local date and time
+    //link : https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
     private void render() {
         ter.renderFrame(world);
+        StdDraw.setPenColor(255, 255, 255);
         if (headsUpText != null) {
-            StdDraw.setPenColor(255, 255, 255);
-            StdDraw.textLeft(0.1, HEIGHT - 1, headsUpText);
+            StdDraw.textLeft(0.1, HEIGHT - 0.5, headsUpText);
         }
+        /*DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm:ss");
+        LocalDateTime instance = LocalDateTime.now();
+        StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));*/
         StdDraw.show();
     }
 
