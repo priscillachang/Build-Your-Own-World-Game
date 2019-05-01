@@ -101,8 +101,8 @@ public class CharacterTile {
         return path;
     }
 
-    public boolean moveTowards(TETile[][] world, CharacterTile other) {
-        List<Point> path = findPathTowards(world, other.x, other.y);
+    public boolean moveTowards(TETile[][] world, int targetX, int targetY) {
+        List<Point> path = findPathTowards(world, targetX, targetY);
         if (path == null || path.size() == 0) {
             return false;
         }

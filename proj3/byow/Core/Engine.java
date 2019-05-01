@@ -213,9 +213,9 @@ public class Engine {
         } catch (IOException e) {}
     }
 
-    private void moveEnemies() {
+    private void moveEnemies(int prevX, int prevY) {
         for (int i = 0; i < enemies.length; i++) {
-            enemies[i].moveTowards(world, player);
+            enemies[i].moveTowards(world, prevX, prevY);
         }
     }
 
@@ -313,22 +313,29 @@ public class Engine {
             }
         } else if (currentState == State.IN_GAME){
             hideEnemyPaths();
+            int prevX = player.getX();
+            int prevY = player.getY();
+            boolean movedIntoEnemy = false;
             if (c == 'w') {
-                moveEnemies();
                 player.moveUp(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'a') {
-                moveEnemies();
                 player.moveLeft(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 's') {
-                moveEnemies();
                 player.moveDown(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'd') {
-                moveEnemies();
                 player.moveRight(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'e') {
                 showEnemyPaths();
             }
-            if (isContactingEnemy()) {
+            if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;
                 gameOver();
                 return;
