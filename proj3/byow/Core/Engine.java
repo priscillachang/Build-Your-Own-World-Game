@@ -59,6 +59,7 @@ public class Engine {
         }
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
+        world[player.getX()][player.getY()] = Tileset.AVATAR;
     }
 
     private Room generateRandomRoom(Random rand) {
