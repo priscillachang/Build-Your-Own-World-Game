@@ -3,7 +3,9 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +26,7 @@ public class Engine {
     public static final int HEIGHT = 30;
     private State currentState;
     private long seed;
+    private boolean shouldDraw;
     private Random rand;
     private TETile[][] world;
     private CharacterTile player;
@@ -37,7 +40,6 @@ public class Engine {
         seed = 0L;
         currentState = State.MAIN_MENU;
         enteredChars = "";
-        mainMenu();
     }
 
     private void generateWorld() {
@@ -50,7 +52,7 @@ public class Engine {
         int numRooms = RandomUtils.uniform(rand, 5, 20);
         List<Room> rooms = new ArrayList<>();
         while (rooms.size() < numRooms) {
-            Room newRoom = generateRandomRoom(rand);
+            Room newRoom = generateRandomRoom();
             if (!newRoom.intersectsAny(rooms)) {
                 rooms.add(newRoom);
                 newRoom.drawRoom(world);
@@ -82,7 +84,7 @@ public class Engine {
         }
     }
 
-    private Room generateRandomRoom(Random rand) {
+    private Room generateRandomRoom() {
         int width = RandomUtils.uniform(rand, 3, 10);
         int height = RandomUtils.uniform(rand, 3, 10);
         int x = RandomUtils.uniform(rand, 1, WIDTH - width - 1);
@@ -95,6 +97,8 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        shouldDraw = true;
+        mainMenu();
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
@@ -133,17 +137,23 @@ public class Engine {
         }
     }
     public void mainMenu() {
-       StdDraw.setCanvasSize(512, 512);
-       Font font = new Font("Arial", Font.BOLD, 40);
-       StdDraw.setFont(font);
-       StdDraw.text(0.5, 0.85, "CS61B: The Game");
-       Font font1 = new Font("Arial", Font.PLAIN, 24);
-       StdDraw.setFont(font1);
-       StdDraw.text(0.5, 0.6, "New Game [N]");
+        if (!shouldDraw) {
+            return;
+        }
+        StdDraw.setCanvasSize(512, 512);
+        Font font = new Font("Arial", Font.BOLD, 40);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.85, "CS61B: The Game");
+        Font font1 = new Font("Arial", Font.PLAIN, 24);
+        StdDraw.setFont(font1);
+        StdDraw.text(0.5, 0.6, "New Game [N]");
         StdDraw.text(0.5, 0.5, "Load Game [L]");
         StdDraw.text(0.5, 0.4, "Quit [Q]");
     }
     public void seedMenu() {
+        if (!shouldDraw) {
+            return;
+        }
         StdDraw.clear();
         Font font = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font);
@@ -158,6 +168,9 @@ public class Engine {
     }
 
     public void gameOver() {
+        if (!shouldDraw) {
+            return;
+        }
         StdDraw.clear(Color.BLACK);
         StdDraw.setCanvasSize(512, 512);
         StdDraw.setXscale(0.0, 1.0);
@@ -169,6 +182,9 @@ public class Engine {
         StdDraw.show();
     }
     public void winner() {
+        if (!shouldDraw) {
+            return;
+        }
         StdDraw.clear(Color.BLACK);
         StdDraw.setCanvasSize(512, 512);
         StdDraw.setXscale(0.0, 1.0);
@@ -182,6 +198,9 @@ public class Engine {
     //@Source looked online to see examples on how to render a local date and time
     //link : https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
     private void render() {
+        if (!shouldDraw) {
+            return;
+        }
         ter.renderFrame(world);
         StdDraw.setPenColor(255, 255, 255);
         if (headsUpText != null) {
@@ -214,7 +233,7 @@ public class Engine {
                 }
             }
             scan.close();
-        } catch (IOException e) {}
+        } catch (IOException e) { }
     }
 
     private void moveEnemies(int prevX, int prevY) {
@@ -250,8 +269,8 @@ public class Engine {
 
     private boolean isContactingEnemy() {
         for (int i = 0; i < enemies.length; i++) {
-            if (player.getX() == enemies[i].getX() &&
-                player.getY() == enemies[i].getY()) {
+            if (player.getX() == enemies[i].getX()
+                    && player.getY() == enemies[i].getY()) {
                 return true;
             }
         }
@@ -280,6 +299,7 @@ public class Engine {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] interactWithInputString(String input) {
+        shouldDraw = false;
         for (int i = 0; i < input.length(); i++) {
             inputCharacter(input.charAt(i));
         }
@@ -342,7 +362,6 @@ public class Engine {
             if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;
                 gameOver();
-                return;
             }
         }
     }
