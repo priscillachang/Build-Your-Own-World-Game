@@ -27,7 +27,7 @@ public class Engine {
     private CharacterTile[] enemies;
     private String headsUpText;
 
-    private enum State { MAIN_MENU, SEED_INPUT, IN_GAME; }
+    private enum State { MAIN_MENU, SEED_INPUT, IN_GAME, GAME_OVER, YOU_WIN; }
 
     public Engine() {
         seed = 0L;
@@ -95,7 +95,7 @@ public class Engine {
                 char c = StdDraw.nextKeyTyped();
                 inputCharacter(c);
             }
-            /*double x = StdDraw.mouseX();
+            double x = StdDraw.mouseX();
             double y = StdDraw.mouseY();
             if (currentState == State.MAIN_MENU && StdDraw.isMousePressed()) {
                 if (x > 0.3 && x < 0.8) {
@@ -106,7 +106,7 @@ public class Engine {
                         inputCharacter('n');
                     }
                 }
-            }*/
+            }
             if (world != null) {
                 int xTile = Math.round((int) StdDraw.mouseX());
                 int yTile = Math.round((int) StdDraw.mouseY());
@@ -148,6 +148,20 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.text(0.5, 0.40, "Press [S] when done");
     }
+    public void gameOver() {
+        StdDraw.clear();
+        Font font = new Font("Arial", Font.BOLD, 60);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.5, "YOU LOSE");
+    }
+    public void winner() {
+        StdDraw.clear();
+        Font font = new Font("Arial", Font.BOLD, 60);
+        StdDraw.setFont(font);
+        StdDraw.text(0.5, 0.5, "YOU WIN");
+    }
+
+
     //@Source looked online to see examples on how to render a local date and time
     //link : https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
     private void render() {
@@ -156,9 +170,9 @@ public class Engine {
         if (headsUpText != null) {
             StdDraw.textLeft(0.1, HEIGHT - 0.5, headsUpText);
         }
-        /*DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm");
         LocalDateTime instance = LocalDateTime.now();
-        StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));*/
+        StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));
         StdDraw.show();
     }
 
@@ -242,7 +256,7 @@ public class Engine {
                 ter.initialize(Engine.WIDTH, Engine.HEIGHT);
                 render();
             }
-        } else {
+        } else if (currentState == State.IN_GAME){
             hideEnemyPaths();
             if (c == 'w') {
                 moveEnemies();
@@ -260,6 +274,10 @@ public class Engine {
                 showEnemyPaths();
             }
             render();
+        } else if (currentState == State.GAME_OVER) {
+            gameOver();
+        } else if (currentState == State.YOU_WIN) {
+            winner();
         }
     }
 }
