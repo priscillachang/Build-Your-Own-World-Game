@@ -75,9 +75,9 @@ public class Engine {
         player1 = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
         Room player2Room = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player1 = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
-        player2 = player2Room.randomSpawn(world, rand, Tileset.FLOWER);
+        player2 = player2Room.randomSpawn(world, rand, Tileset.PLAYER);
         world[player1.getX()][player1.getY()] = Tileset.AVATAR;
-        world[player2.getX()][player2.getY()] = Tileset.FLOWER;
+        world[player2.getX()][player2.getY()] = Tileset.PLAYER;
 
         enemies = new CharacterTile[3];
         for (int i = 0; i < 3; i++) {
