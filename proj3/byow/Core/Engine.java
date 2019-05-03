@@ -75,9 +75,9 @@ public class Engine {
         player = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
         Room player2Room = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
-        player2 = player2Room.randomSpawn(world, rand, Tileset.FLOWER);
+        player2 = player2Room.randomSpawn(world, rand, Tileset.PLAYER);
         world[player.getX()][player.getY()] = Tileset.AVATAR;
-        world[player2.getX()][player2.getY()] = Tileset.FLOWER;
+        world[player2.getX()][player2.getY()] = Tileset.PLAYER;
 
         enemies = new CharacterTile[3];
         for (int i = 0; i < 3; i++) {
@@ -196,7 +196,7 @@ public class Engine {
         //StdDraw.setPenColor(255, 255, 255);
         Font font = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font);
-        StdDraw.text(0.5, 0.5, "YOU LOSE");
+        StdDraw.text(0.5, 0.5, "YOU LOSE (U m U)");
         StdDraw.show();
     }
     public void winner() {
@@ -209,7 +209,7 @@ public class Engine {
         StdDraw.setYscale(0.0, 1.0);
         Font font = new Font("Arial", Font.BOLD, 60);
         StdDraw.setFont(font);
-        StdDraw.text(0.5, 0.5, "YOU WIN");
+        StdDraw.text(0.5, 0.5, "YOU WIN! (U w U)");
         StdDraw.show();
     }
 
@@ -416,6 +416,10 @@ public class Engine {
             if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;
                 gameOver();
+            }
+            if (inventory.size() > 2) {
+                currentState = State.YOU_WIN;
+                winner();
             }
         }
     }
