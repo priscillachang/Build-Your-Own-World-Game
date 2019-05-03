@@ -135,10 +135,10 @@ public class CharacterTile {
 
     private boolean isMovable(TETile tile) {
         if (avatar == Tileset.ENEMY) {
-            return tile != Tileset.WALL && tile != Tileset.ITEM;
+            return tile != Tileset.WALL && tile != Tileset.ITEM && tile != Tileset.ENEMY;
         }
         else {
-            return tile != Tileset.WALL;
+            return tile != Tileset.WALL && tile != Tileset.AVATAR && tile != Tileset.FLOWER;
         }
     }
 }

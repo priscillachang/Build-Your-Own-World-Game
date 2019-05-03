@@ -271,12 +271,23 @@ public class Engine {
 
     private void showEnemyPaths() {
         for (int i = 0; i < enemies.length; i++) {
-            List<Point> path = enemies[i].findPathTowards(world, player.getX(), player.getY());
-            if (path == null) {
+            List<Point> path1 = enemies[i].findPathTowards(world, player.getX(), player.getY());
+            List<Point> path2 = enemies[i].findPathTowards(world, player2.getX(), player.getY());
+            if (path1 == null && path2 == null) {
                 continue;
             }
-            for (int j = 0; j < path.size() - 1; j++) {
-                Point p = path.get(j);
+            List<Point> shorterPath = null;
+            if (path1 == null) {
+                shorterPath = path2;
+            } else if (path2 == null) {
+                shorterPath = path1;
+            } else if (path1.size() <= path2.size()) {
+                shorterPath = path1;
+            } else {
+                shorterPath = path2;
+            }
+            for (int j = 0; j < shorterPath.size() - 1; j++) {
+                Point p = shorterPath.get(j);
                 if (world[p.x][p.y] == Tileset.FLOOR) {
                     world[p.x][p.y] = Tileset.ENEMY_PATH;
                 }
@@ -298,6 +309,9 @@ public class Engine {
         for (int i = 0; i < enemies.length; i++) {
             if (player.getX() == enemies[i].getX()
                     && player.getY() == enemies[i].getY()) {
+                return true;
+            } else if (player2.getX() == enemies[i].getX()
+                    && player2.getY() == enemies[i].getY()) {
                 return true;
             }
         }
@@ -381,6 +395,10 @@ public class Engine {
             hideEnemyPaths();
             int prevX = player.getX();
             int prevY = player.getY();
+            if ("ijkl".indexOf(c) >= 0) {
+                prevX = player2.getX();
+                prevY = player2.getY();
+            }
             boolean movedIntoEnemy = false;
             if (c == 'w') {
                 pickUpItemAt(player.getX(), player.getY() + 1);
@@ -405,13 +423,25 @@ public class Engine {
             } else if (c == 'e') {
                 showEnemyPaths();
             } else if (c == 'i') {
+                pickUpItemAt(player2.getX(), player2.getY() + 1);
                 player2.moveUp(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'j') {
+                pickUpItemAt(player2.getX() - 1, player2.getY());
                 player2.moveLeft(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'k') {
+                pickUpItemAt(player2.getX(), player2.getY() - 1);
                 player2.moveDown(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             } else if (c == 'l') {
+                pickUpItemAt(player2.getX() - 1, player2.getY());
                 player2.moveRight(world);
+                movedIntoEnemy = isContactingEnemy();
+                moveEnemies(prevX, prevY);
             }
             if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;
