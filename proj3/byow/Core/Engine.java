@@ -161,7 +161,7 @@ public class Engine {
         StdDraw.setCanvasSize(512, 512);
         Font font = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font);
-        StdDraw.text(0.5, 0.85, "CS61B: The Game");
+        StdDraw.text(0.5, 0.85, "Coordination");
         Font font1 = new Font("Arial", Font.PLAIN, 24);
         StdDraw.setFont(font1);
         StdDraw.text(0.5, 0.6, "New Game [N]");
