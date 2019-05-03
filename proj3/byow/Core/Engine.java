@@ -31,6 +31,8 @@ public class Engine {
     private TETile[][] world;
     private CharacterTile player;
     private CharacterTile[] enemies;
+    private List<CharacterTile> itemsInWorld;
+    private List<CharacterTile> inventory;
     private String headsUpText;
     private String enteredChars;
 
@@ -69,7 +71,7 @@ public class Engine {
             }
         }
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
-        player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
+        player = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
         world[player.getX()][player.getY()] = Tileset.AVATAR;
 
         enemies = new CharacterTile[3];
@@ -79,8 +81,19 @@ public class Engine {
                 i--;
                 continue;
             }
-            enemies[i] = enemyRoom.randomSpawn(rand, Tileset.ENEMY);
+            enemies[i] = enemyRoom.randomSpawn(world, rand, Tileset.ENEMY);
             world[enemies[i].getX()][enemies[i].getY()] = Tileset.ENEMY;
+        }
+
+        itemsInWorld = new ArrayList<>();
+        inventory = new ArrayList<>();
+        while (itemsInWorld.size() < 3) {
+            Room itemRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
+            if (itemRoom != playerRoom) {
+                CharacterTile item = itemRoom.randomSpawn(world, rand, Tileset.ITEM);
+                itemsInWorld.add(item);
+                world[item.getX()][item.getY()] = Tileset.ITEM;
+            }
         }
     }
 
@@ -206,6 +219,11 @@ public class Engine {
         if (headsUpText != null) {
             StdDraw.textLeft(0.1, HEIGHT - 0.5, headsUpText);
         }
+        String inventoryString = "Inventory: ";
+        for (CharacterTile i : inventory) {
+            inventoryString += i.getAvatar().character();
+        }
+        StdDraw.text(WIDTH / 2.0, HEIGHT - 0.5, inventoryString);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy  HH:mm");
         LocalDateTime instance = LocalDateTime.now();
         StdDraw.textRight(WIDTH, HEIGHT - 0.5, dtf.format(instance));
@@ -281,6 +299,17 @@ public class Engine {
         return false;
     }
 
+    private void pickUpItemAt(int x, int y) {
+        for (int i = 0; i < itemsInWorld.size(); i++) {
+            CharacterTile item = itemsInWorld.get(i);
+            if (item.getX() == x && item.getY() == y) {
+                itemsInWorld.remove(i);
+                inventory.add(item);
+                return;
+            }
+        }
+    }
+
     /**
      * Method used for autograding and testing your code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
@@ -349,18 +378,22 @@ public class Engine {
             int prevY = player.getY();
             boolean movedIntoEnemy = false;
             if (c == 'w') {
+                pickUpItemAt(player.getX(), player.getY() + 1);
                 player.moveUp(world);
                 movedIntoEnemy = isContactingEnemy();
                 moveEnemies(prevX, prevY);
             } else if (c == 'a') {
+                pickUpItemAt(player.getX() - 1, player.getY());
                 player.moveLeft(world);
                 movedIntoEnemy = isContactingEnemy();
                 moveEnemies(prevX, prevY);
             } else if (c == 's') {
+                pickUpItemAt(player.getX(), player.getY() - 1);
                 player.moveDown(world);
                 movedIntoEnemy = isContactingEnemy();
                 moveEnemies(prevX, prevY);
             } else if (c == 'd') {
+                pickUpItemAt(player.getX() + 1, player.getY());
                 player.moveRight(world);
                 movedIntoEnemy = isContactingEnemy();
                 moveEnemies(prevX, prevY);

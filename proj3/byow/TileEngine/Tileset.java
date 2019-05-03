@@ -36,6 +36,7 @@ public class Tileset {
     public static final TETile ENEMY = new TETile('E', Color.RED, Color.ORANGE, "enemy");
     public static final TETile ENEMY_PATH = new TETile(' ', Color.BLACK, Color.YELLOW,
             "floor");
+    public static final TETile ITEM = new TETile('•', Color.WHITE, Color.BLACK, "item");
 }
 
 

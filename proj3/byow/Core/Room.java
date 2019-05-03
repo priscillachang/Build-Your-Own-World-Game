@@ -92,9 +92,13 @@ public class Room {
     /**
      * Spawns a given character in a random location within this room.
      */
-    public CharacterTile randomSpawn(Random rand, TETile type) {
-        int characterX = RandomUtils.uniform(rand, x, x + width);
-        int characterY = RandomUtils.uniform(rand, y, y + height);
+    public CharacterTile randomSpawn(TETile[][] world, Random rand, TETile type) {
+        int characterX = -1;
+        int characterY = -1;
+        do {
+            characterX = RandomUtils.uniform(rand, x, x + width);
+            characterY = RandomUtils.uniform(rand, y, y + height);
+        } while (world[characterX][characterY] != Tileset.FLOOR);
         return new CharacterTile(characterX, characterY, type);
     }
 

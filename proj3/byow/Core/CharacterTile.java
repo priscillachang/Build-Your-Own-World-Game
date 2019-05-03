@@ -113,6 +113,10 @@ public class CharacterTile {
         return moveTo(world, (int) next.getX(), (int) next.getY());
     }
 
+    public TETile getAvatar() {
+        return avatar;
+    }
+
     private Point getPoint(Point current, Direction direction) {
         if (direction == Direction.NORTH) {
             return new Point((int) current.getX(), (int) current.getY() + 1);
@@ -130,6 +134,11 @@ public class CharacterTile {
     }
 
     private boolean isMovable(TETile tile) {
-        return tile != Tileset.WALL && tile != avatar;
+        if (avatar == Tileset.ENEMY) {
+            return tile != Tileset.WALL && tile != Tileset.ITEM;
+        }
+        else {
+            return tile != Tileset.WALL;
+        }
     }
 }
