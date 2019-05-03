@@ -29,7 +29,7 @@ public class Engine {
     private boolean shouldDraw;
     private Random rand;
     private TETile[][] world;
-    private CharacterTile player;
+    private CharacterTile player1;
     private CharacterTile player2;
     private CharacterTile[] enemies;
     private List<CharacterTile> itemsInWorld;
@@ -72,11 +72,11 @@ public class Engine {
             }
         }
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
-        player = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
+        player1 = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
         Room player2Room = rooms.get(RandomUtils.uniform(rand, rooms.size()));
-        player = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
+        player1 = playerRoom.randomSpawn(world, rand, Tileset.AVATAR);
         player2 = player2Room.randomSpawn(world, rand, Tileset.FLOWER);
-        world[player.getX()][player.getY()] = Tileset.AVATAR;
+        world[player1.getX()][player1.getY()] = Tileset.AVATAR;
         world[player2.getX()][player2.getY()] = Tileset.FLOWER;
 
         enemies = new CharacterTile[3];
@@ -271,8 +271,8 @@ public class Engine {
 
     private void showEnemyPaths() {
         for (int i = 0; i < enemies.length; i++) {
-            List<Point> path1 = enemies[i].findPathTowards(world, player.getX(), player.getY());
-            List<Point> path2 = enemies[i].findPathTowards(world, player2.getX(), player.getY());
+            List<Point> path1 = enemies[i].findPathTowards(world, player1.getX(), player1.getY());
+            List<Point> path2 = enemies[i].findPathTowards(world, player2.getX(), player1.getY());
             if (path1 == null && path2 == null) {
                 continue;
             }
@@ -307,8 +307,8 @@ public class Engine {
 
     private boolean isContactingEnemy() {
         for (int i = 0; i < enemies.length; i++) {
-            if (player.getX() == enemies[i].getX()
-                    && player.getY() == enemies[i].getY()) {
+            if (player1.getX() == enemies[i].getX()
+                    && player1.getY() == enemies[i].getY()) {
                 return true;
             } else if (player2.getX() == enemies[i].getX()
                     && player2.getY() == enemies[i].getY()) {
@@ -327,6 +327,24 @@ public class Engine {
                 return;
             }
         }
+    }
+
+    private void placeItems() {
+        for (CharacterTile item : itemsInWorld) {
+            if (world[item.getX()][item.getY()] == Tileset.FLOOR) {
+                world[item.getX()][item.getY()] = item.getAvatar();
+            }
+        }
+        System.out.println();
+    }
+
+    private void dropItem(CharacterTile player) {
+        if (inventory.isEmpty()) {
+            return;
+        }
+        CharacterTile item = inventory.remove(0);
+        item.setLocation(player.getX(), player.getY());
+        itemsInWorld.add(item);
     }
 
     /**
@@ -393,55 +411,67 @@ public class Engine {
             }
         } else if (currentState == State.IN_GAME) {
             hideEnemyPaths();
-            int prevX = player.getX();
-            int prevY = player.getY();
+            int prevX = player1.getX();
+            int prevY = player1.getY();
             if ("ijkl".indexOf(c) >= 0) {
                 prevX = player2.getX();
                 prevY = player2.getY();
             }
             boolean movedIntoEnemy = false;
             if (c == 'w') {
-                pickUpItemAt(player.getX(), player.getY() + 1);
-                player.moveUp(world);
+                pickUpItemAt(player1.getX(), player1.getY() + 1);
+                player1.moveUp(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 'a') {
-                pickUpItemAt(player.getX() - 1, player.getY());
-                player.moveLeft(world);
+                pickUpItemAt(player1.getX() - 1, player1.getY());
+                player1.moveLeft(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 's') {
-                pickUpItemAt(player.getX(), player.getY() - 1);
-                player.moveDown(world);
+                pickUpItemAt(player1.getX(), player1.getY() - 1);
+                player1.moveDown(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 'd') {
-                pickUpItemAt(player.getX() + 1, player.getY());
-                player.moveRight(world);
+                pickUpItemAt(player1.getX() + 1, player1.getY());
+                player1.moveRight(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
+            } else if (c == 'q') {
+                dropItem(player1);
             } else if (c == 'e') {
                 showEnemyPaths();
             } else if (c == 'i') {
                 pickUpItemAt(player2.getX(), player2.getY() + 1);
                 player2.moveUp(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 'j') {
                 pickUpItemAt(player2.getX() - 1, player2.getY());
                 player2.moveLeft(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 'k') {
                 pickUpItemAt(player2.getX(), player2.getY() - 1);
                 player2.moveDown(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
             } else if (c == 'l') {
-                pickUpItemAt(player2.getX() - 1, player2.getY());
+                pickUpItemAt(player2.getX() + 1, player2.getY());
                 player2.moveRight(world);
                 movedIntoEnemy = isContactingEnemy();
+                placeItems();
                 moveEnemies(prevX, prevY);
+            } else if (c == 'u') {
+                dropItem(player2);
             }
             if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;

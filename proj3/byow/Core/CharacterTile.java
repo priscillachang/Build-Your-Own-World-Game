@@ -32,6 +32,11 @@ public class CharacterTile {
         return y;
     }
 
+    public void setLocation(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public boolean moveUp(TETile[][] world) {
         return moveTo(world, x, y + 1);
     }
