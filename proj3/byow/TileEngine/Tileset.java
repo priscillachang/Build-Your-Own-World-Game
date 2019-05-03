@@ -25,7 +25,8 @@ public class Tileset {
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
-    public static final TETile FLOWER = new TETile('❀', Color.magenta, Color.black, "Player2");
+    public static final TETile FLOWER = new TETile('❀', Color.magenta, Color.black, "Flower");
+    public static final TETile PLAYER = new TETile('@', Color.CYAN, Color.black, "Player2");
     public static final TETile LOCKED_DOOR = new TETile('█', Color.orange, Color.black,
             "locked door");
     public static final TETile UNLOCKED_DOOR = new TETile('▢', Color.orange, Color.black,
@@ -34,9 +35,9 @@ public class Tileset {
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile ENEMY = new TETile('E', Color.RED, Color.ORANGE, "enemy");
-    public static final TETile ENEMY_PATH = new TETile('-', Color.yellow, Color.black,
+    public static final TETile ENEMY_PATH = new TETile('=', Color.yellow, Color.black,
             "floor");
-    public static final TETile ITEM = new TETile('•', Color.WHITE, Color.BLACK, "item");
+    public static final TETile ITEM = new TETile('♠', Color.BLUE, Color.BLACK, "item");
 }
 
 
