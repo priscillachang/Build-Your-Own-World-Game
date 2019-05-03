@@ -30,6 +30,7 @@ public class Engine {
     private Random rand;
     private TETile[][] world;
     private CharacterTile player;
+    private CharacterTile player2;
     private CharacterTile[] enemies;
     private String headsUpText;
     private String enteredChars;
@@ -69,8 +70,11 @@ public class Engine {
             }
         }
         Room playerRoom = rooms.get(RandomUtils.uniform(rand, rooms.size()));
+        Room player2Room = rooms.get(RandomUtils.uniform(rand, rooms.size()));
         player = playerRoom.randomSpawn(rand, Tileset.AVATAR);
+        player2 = player2Room.randomSpawn(rand, Tileset.FLOWER);
         world[player.getX()][player.getY()] = Tileset.AVATAR;
+        world[player2.getX()][player2.getY()] = Tileset.FLOWER;
 
         enemies = new CharacterTile[3];
         for (int i = 0; i < 3; i++) {
@@ -366,6 +370,14 @@ public class Engine {
                 moveEnemies(prevX, prevY);
             } else if (c == 'e') {
                 showEnemyPaths();
+            } else if (c == 'i') {
+                player2.moveUp(world);
+            } else if (c == 'j') {
+                player2.moveLeft(world);
+            } else if (c == 'k') {
+                player2.moveDown(world);
+            } else if (c == 'l') {
+                player2.moveRight(world);
             }
             if (movedIntoEnemy || isContactingEnemy()) {
                 currentState = State.GAME_OVER;
